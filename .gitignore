@@ -9,3 +9,4 @@ __pycache__/
 *.so
 *~
 .pypirc
+*.sublime-project
