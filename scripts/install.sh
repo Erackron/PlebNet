@@ -48,6 +48,7 @@ if [ $(lsb_release -cs) == "trusty" ]
 then
     echo "Trusty detected"
     sudo apt-get install -y build-essential libssl-dev libffi-dev python-dev software-properties-common
+    pip install --upgrade setuptools # do this otherwise cryptography install fails
     pip install cryptography
     pip install pynacl
     pip install pysocks
@@ -67,13 +68,13 @@ fi
 
 # Update pip to avoid locale errors in certain configurations
 echo "upgrading pip"
-LC_ALL=en_US.UTF-8 pip install --upgrade pip
+LC_ALL=en_US.UTF-8 pip install --upgrade pip # This line breaks on xenial
 echo "done upgrading pip"
 
 pip install pyaes psutil
 
 cd $HOME
-[ ! -d "PlebNet" ] && git clone -b master https://github.com/rjwvandenberg/PlebNet
+[ ! -d "PlebNet" ] && git clone -b master https://github.com/Erackron/PlebNet.git
 pip install --upgrade ./PlebNet
 cd PlebNet
 git submodule update --init --recursive tribler
