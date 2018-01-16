@@ -9,7 +9,7 @@ from twython import Twython
 def tweet_arrival():
     options = Settings()
     options.read_settings()
-    name = options.get('firstname') + ' ' + options.get('lastname')
+    name = options.get('User', 'firstName') + ' ' + options.get('User', 'lastName')
 
     path = os.path.join(user_config_dir(), 'twitter.cfg')
     if not os.path.exists(path):
