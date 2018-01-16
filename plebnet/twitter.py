@@ -2,12 +2,12 @@ import os
 from configparser import ConfigParser
 
 from appdirs import user_config_dir
-from cloudomate.util.config import UserOptions
+from cloudomate.util.settings import Settings
 from twython import Twython
 
 
 def tweet_arrival():
-    options = UserOptions()
+    options = Settings()
     options.read_settings()
     name = options.get('firstname') + ' ' + options.get('lastname')
 
