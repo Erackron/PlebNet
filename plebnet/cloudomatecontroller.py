@@ -11,7 +11,7 @@ from faker.factory import Factory
 
 
 def _user_settings():
-    settings = UserOptions()
+    settings = Settings()
     settings.read_settings()
     return settings
 
