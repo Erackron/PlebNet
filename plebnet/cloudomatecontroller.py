@@ -6,7 +6,7 @@ import unicodedata
 
 from appdirs import user_config_dir
 from cloudomate import wallet as wallet_util
-from cloudomate.util.config import UserOptions, os
+from cloudomate.util.settings import Settings, os
 from faker.factory import Factory
 
 
