@@ -48,12 +48,13 @@ if [ $(lsb_release -cs) == "trusty" ]
 then
     echo "Trusty detected"
     sudo apt-get install -y build-essential libssl-dev libffi-dev python-dev software-properties-common
-    pip install --upgrade setuptools # do this otherwise cryptography install fails
+    pip install --upgrade setuptools pip # do this otherwise cryptography install fails
     pip install cryptography
     pip install pynacl
     pip install pysocks
     pip install keyrings.alt
     pip install libnacl
+    pip install --upgrade enum34
     sudo add-apt-repository -y ppa:chris-lea/libsodium;
     sudo echo "deb http://ppa.launchpad.net/chris-lea/libsodium/ubuntu trusty main" >> /etc/apt/sources.list;
     sudo echo "deb-src http://ppa.launchpad.net/chris-lea/libsodium/ubuntu trusty main" >> /etc/apt/sources.list;
