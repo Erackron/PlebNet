@@ -60,9 +60,11 @@ def generate_config():
         print(("cloudomate.cfg already present at %s" % filename))
         config.read_settings(filename=filename)
         return config
+    print('Generating cloudomate config at %s' % filename)
     locale = random.choice(['cs_CZ', 'de_DE', 'dk_DK', 'es_ES', 'et_EE', 'hr_HR', 'it_IT'])
     fake = Factory().create(locale)
     cp = configparser.ConfigParser()
+    cp.optionxform = str
     _generate_address(cp, fake)
     _generate_server(cp, fake)
     _generate_user(cp, fake)
@@ -77,7 +79,7 @@ def _remove_unicode(cp):
         for option in cp.options(section):
             item = cp.get(section, option)
             if isinstance(item, str):
-                cp.set(section, option, unicodedata.normalize('NFKD', item).encode('ascii', 'ignore'))
+                cp.set(section, option, unicodedata.normalize('NFKD', item))
 
 
 def _generate_user(cp, fake):
@@ -87,10 +89,10 @@ def _generate_user(cp, fake):
     full_name = firstname + '_' + lastname
     full_name = full_name.replace(' ', '_')
     cp.set('User', 'email', full_name + '@heijligers.me')
-    cp.set('User', 'firstname', firstname)
-    cp.set('User', 'lastname', lastname)
-    cp.set('User', 'companyname', fake.company())
-    cp.set('User', 'phonenumber', fake.numerify('##########'))
+    cp.set('User', 'firstName', firstname)
+    cp.set('User', 'lastName', lastname)
+    cp.set('User', 'companyName', fake.company())
+    cp.set('User', 'phoneNumber', fake.numerify('##########'))
     cp.set('User', 'password', fake.password(length=10, special_chars=False))
 
 
@@ -99,13 +101,13 @@ def _generate_address(cp, fake):
     cp.set('Address', 'address', fake.street_address())
     cp.set('Address', 'city', fake.city())
     cp.set('Address', 'state', fake.state())
-    cp.set('Address', 'countrycode', fake.country_code())
+    cp.set('Address', 'countryCode', fake.country_code())
     cp.set('Address', 'zipcode', fake.postcode())
 
 
 def _generate_server(cp, fake):
     cp.add_section('Server')
-    cp.set('Server', 'rootpw', fake.password(length=10, special_chars=False))
+    cp.set('Server', 'root_password', fake.password(length=10, special_chars=False))
     cp.set('Server', 'ns1', 'ns1')
     cp.set('Server', 'ns2', 'ns2')
     cp.set('Server', 'hostname', fake.word())
