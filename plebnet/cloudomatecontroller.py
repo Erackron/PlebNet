@@ -54,7 +54,7 @@ def purchase(provider, vps_option, wallet):
 
 
 def generate_config():
-    config = UserOptions()
+    config = Settings()
     filename = os.path.join(user_config_dir(), 'cloudomate.cfg')
     if os.path.exists(filename):
         print(("cloudomate.cfg already present at %s" % filename))
