@@ -87,10 +87,10 @@ def create_wallet():
         storage.write()
         wallet = ElectrumWallet(storage)
         wallet.synchronize()
-        print("Your wallet generation seed is:\n\"%s\"" % seed)
+        print(("Your wallet generation seed is:\n\"%s\"" % seed))
         print("Please keep it in a safe place; if you lose it, you will not be able to restore your wallet.")
         wallet.storage.write()
-        print("Wallet saved in '%s'" % wallet.storage.path)
+        print(("Wallet saved in '%s'" % wallet.storage.path))
     else:
         print("Wallet already present")
 
@@ -217,12 +217,12 @@ def update_choice(config, dna):
     excluded_providers = config.get('excluded_providers')
     available_providers = list(set(all_providers.keys()) - set(excluded_providers))
     providers = {k: all_providers[k] for k in all_providers if k in available_providers}
-    print("Providers: %s" % providers)
+    print(("Providers: %s" % providers))
     if providers >= 1 and sum(providers.values()) > 0:
         providers = DNA.normalize_excluded(providers)
         choice = (provider, option, price) = pick_provider(providers)
         config.set('chosen_provider', choice)
-        print("First provider: %s" % provider)
+        print(("First provider: %s" % provider))
 
 
 def pick_provider(providers):
@@ -284,16 +284,16 @@ def install_available_servers(config, dna):
     bought = config.get('bought')
 
     for provider, transaction_hash in bought:
-        print("Checking whether %s is activated" % provider)
+        print(("Checking whether %s is activated" % provider))
 
         try:
             ip = cloudomatecontroller.get_ip(cloudomate_providers[provider])
         except BaseException as e:
             print(e)
-            print("%s not ready yet" % provider)
+            print(("%s not ready yet" % provider))
             return
 
-        print("Installling child on %s " % provider)
+        print(("Installling child on %s " % provider))
         if is_valid_ip(ip):
             user_options = UserOptions()
             user_options.read_settings()
@@ -334,7 +334,7 @@ def install_server(ip, rootpw):
     file_path = os.path.dirname(os.path.realpath(__file__))
     script_path = os.path.join(file_path, '/root/PlebNet/scripts/create-child.sh')
     command = '%s %s %s' % (script_path, ip.strip(), rootpw.strip())
-    print("Running %s" % command)
+    print(("Running %s" % command))
     success = subprocess.call(command, shell=True)
     if success:
         print("Installation successful")
@@ -355,12 +355,12 @@ Subject: New child spawned
     mail += mail_message
 
     try:
-        print("Sending mail: %s" + mail)
+        print(("Sending mail: %s" + mail))
         smtp = smtplib.SMTP('mail.heijligers.me')
         smtp.sendmail(sender, receivers, mail)
-        print "Successfully sent email"
+        print("Successfully sent email")
     except smtplib.SMTPException:
-        print "Error: unable to send email"
+        print("Error: unable to send email")
 
 
 if __name__ == '__main__':

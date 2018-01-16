@@ -67,13 +67,13 @@ class DNA:
 
     def mutate(self, provider):
         if provider not in self.vps:
-            print("{0} not in dna".format(provider))
+            print(("{0} not in dna".format(provider)))
             return False
         self.vps[provider] += self.rate
 
     def demutate(self, provider):
         if provider not in self.vps:
-            print("{0} not in dna".format(provider))
+            print(("{0} not in dna".format(provider)))
             return False
         self.vps[provider] -= self.rate
         if self.vps[provider] < 0:
@@ -135,10 +135,10 @@ class DNA:
 if __name__ == "__main__":
     dna = DNA()
     dna.read_dictionary()
-    print(dna.dictionary)
+    print((dna.dictionary))
     dictionary = dna.exclude('linevast')
     print(dictionary)
     for i in range(100):
         dna.positive_evolve('rockhoster')
-    print(dna.dictionary)
-    print(dna.choose_provider(dictionary))
+    print((dna.dictionary))
+    print((dna.choose_provider(dictionary)))

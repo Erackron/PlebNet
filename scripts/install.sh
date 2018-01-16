@@ -79,7 +79,7 @@ cd $HOME
 pip install --upgrade ./PlebNet
 cd PlebNet
 git submodule update --init --recursive tribler
-pip install ./tribler/electrum
+pip install https://download.electrum.org/3.0.5/Electrum-3.0.5.tar.gz
 #no longer used since importing own tribler fork
 #cp docker/market/twistd_plugin/plebnet_plugin.py $HOME/PlebNet/tribler/twisted/plugins/
 cd /root

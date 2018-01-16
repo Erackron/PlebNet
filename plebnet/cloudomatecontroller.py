@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import ConfigParser
+import configparser
 import codecs
 import random
 import unicodedata
@@ -45,9 +45,9 @@ def purchase(provider, vps_option, wallet):
     option = options(provider)[vps_option]
     try:
         transaction_hash = provider.purchase(settings, option, wallet)
-        print("Transaction hash of purchase: {0}".format(transaction_hash))
+        print(("Transaction hash of purchase: {0}".format(transaction_hash)))
         return transaction_hash
-    except SystemExit, e:
+    except SystemExit as e:
         print("SystemExit catched at cloudomatecontroller purchase")
         print(e)
         return False
@@ -57,12 +57,12 @@ def generate_config():
     config = UserOptions()
     filename = os.path.join(user_config_dir(), 'cloudomate.cfg')
     if os.path.exists(filename):
-        print("cloudomate.cfg already present at %s" % filename)
+        print(("cloudomate.cfg already present at %s" % filename))
         config.read_settings(filename=filename)
         return config
     locale = random.choice(['cs_CZ', 'de_DE', 'dk_DK', 'es_ES', 'et_EE', 'hr_HR', 'it_IT'])
     fake = Factory().create(locale)
-    cp = ConfigParser.ConfigParser()
+    cp = configparser.ConfigParser()
     _generate_address(cp, fake)
     _generate_server(cp, fake)
     _generate_user(cp, fake)
@@ -76,7 +76,7 @@ def _remove_unicode(cp):
     for section in cp.sections():
         for option in cp.options(section):
             item = cp.get(section, option)
-            if isinstance(item, unicode):
+            if isinstance(item, str):
                 cp.set(section, option, unicodedata.normalize('NFKD', item).encode('ascii', 'ignore'))
 
 

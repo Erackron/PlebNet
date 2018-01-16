@@ -1,5 +1,5 @@
 import os
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 
 from appdirs import user_config_dir
 from cloudomate.util.config import UserOptions
@@ -13,7 +13,7 @@ def tweet_arrival():
 
     path = os.path.join(user_config_dir(), 'twitter.cfg')
     if not os.path.exists(path):
-        print("Can't Tweet: {0} doesn't exist".format(path))
+        print(("Can't Tweet: {0} doesn't exist".format(path)))
         return False
     cp = ConfigParser()
     cp.read(path)
@@ -26,7 +26,7 @@ def tweet_arrival():
         twitter.update_status(
             status='Pleb %s has joined the botnet for good. #PlebNet #Cloudomate #Tribler #Bitcoin' % name)
         print("Tweeted arrival")
-    except Exception, e:
-        print e
+    except Exception as e:
+        print(e)
         return False
     return True
