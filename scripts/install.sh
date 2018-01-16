@@ -15,9 +15,12 @@ apt-get update
 # Requiring manual configuration after installation
 # && apt-get -y upgrade
 
+apt-get install -y software-properties-common python-software-properties
+add-apt-repository ppa:jonathonf/python-3.6
+apt-get update
 
 # Install dependencies
-sudo apt-get install -y python-pip
+sudo apt-get install -y python python-pip python3.6 python3-pip
 sudo apt-get install -y \
     python-crypto \
     python-pyasn1 \
@@ -43,7 +46,9 @@ sudo apt-get install -y \
     python-scipy \
     python-wxtools \
     git \
-    python-lxml
+    python-lxml \
+    libxml2-dev \
+    libxslt-dev
 if [ $(lsb_release -cs) == "trusty" ]
 then
     echo "Trusty detected"
@@ -75,11 +80,13 @@ echo "done upgrading pip"
 pip install pyaes psutil
 
 cd $HOME
+[ ! -d "cloudomate" ] && git clone -b hoster-refactor https://github.com/Erackron/cloudomate.git
+pip3 install --upgrade ./cloudomate
 [ ! -d "PlebNet" ] && git clone -b python3 https://github.com/Erackron/PlebNet.git
-pip install --upgrade ./PlebNet
+pip3 install --upgrade ./PlebNet
 cd PlebNet
 git submodule update --init --recursive tribler
-pip install https://download.electrum.org/3.0.5/Electrum-3.0.5.tar.gz
+pip3 install https://download.electrum.org/3.0.5/Electrum-3.0.5.tar.gz
 #no longer used since importing own tribler fork
 #cp docker/market/twistd_plugin/plebnet_plugin.py $HOME/PlebNet/tribler/twisted/plugins/
 cd /root
