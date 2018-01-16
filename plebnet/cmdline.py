@@ -11,7 +11,7 @@ from subprocess import CalledProcessError
 import cloudomate
 import electrum
 from cloudomate.cmdline import providers as cloudomate_providers
-from cloudomate.util.config import UserOptions
+from cloudomate.util.settings import Settings
 from cloudomate.wallet import Wallet
 from electrum import Wallet as ElectrumWallet
 from electrum import WalletStorage
@@ -295,7 +295,7 @@ def install_available_servers(config, dna):
 
         print(("Installling child on %s " % provider))
         if is_valid_ip(ip):
-            user_options = UserOptions()
+            user_options = Settings()
             user_options.read_settings()
             rootpw = user_options.get('rootpw')
             cloudomate_providers[provider].br = cloudomate_providers[provider]._create_browser()
