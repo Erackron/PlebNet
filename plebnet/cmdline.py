@@ -79,7 +79,7 @@ def create_wallet():
         storage = WalletStorage(config.get_wallet_path())
         passphrase = config.get('passphrase', '')
         seed = Mnemonic('en').make_seed()
-        k = keystore.from_seed(seed, passphrase)
+        k = keystore.from_seed(seed, passphrase, False)
         k.update_password(None, None)
         storage.put('keystore', k.dump())
         storage.put('wallet_type', 'standard')
