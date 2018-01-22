@@ -6,12 +6,12 @@ import unicodedata
 
 from appdirs import user_config_dir
 from cloudomate import wallet as wallet_util
-from cloudomate.util.config import UserOptions, os
+from cloudomate.util.settings import Settings, os
 from faker.factory import Factory
 
 
 def _user_settings():
-    settings = UserOptions()
+    settings = Settings()
     settings.read_settings()
     return settings
 
@@ -54,7 +54,7 @@ def purchase(provider, vps_option, wallet):
 
 
 def generate_config():
-    config = UserOptions()
+    config = Settings()
     filename = os.path.join(user_config_dir(), 'cloudomate.cfg')
     if os.path.exists(filename):
         print("cloudomate.cfg already present at %s" % filename)

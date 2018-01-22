@@ -72,9 +72,12 @@ echo "upgrading pip"
 LC_ALL=en_US.UTF-8 pip install --upgrade pip # This line breaks on xenial
 echo "done upgrading pip"
 
-pip install pyaes psutil
+pip install pyaes psutil requests[security]
 
 cd $HOME
+# Update mechanicalsoup
+[ ! -d "MechanicalSoup" ] && git clone https://github.com/MechanicalSoup/MechanicalSoup.git
+pip install --upgrade ./MechanicalSoup
 [ ! -d "PlebNet" ] && git clone -b master https://github.com/Erackron/PlebNet.git
 pip install --upgrade ./PlebNet
 cd PlebNet

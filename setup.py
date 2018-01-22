@@ -8,6 +8,17 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
+import sys
+
+if sys.version_info.major == 2:
+    package_data = {
+        b'plebnet': [],
+    }
+else:
+    package_data = {
+        'plebnet': [],
+    }
+
 setup(
     name='plebnet',
 
@@ -42,16 +53,21 @@ setup(
 
     packages=find_packages(exclude=['docs']),
 
-    install_requires=['requests', 'names', 'cloudomate', 'faker', 'twython'],
+    install_requires=[
+        'requests',
+        'names',
+        'cloudomate',
+        'faker',
+        'twython',
+        'ConfigParser'
+    ],
 
     extras_require={
         'dev': [],
         'test': [],
     },
 
-    package_data={
-        'plebnet': [],
-    },
+    package_data=package_data,
 
     entry_points={
         'console_scripts': [
