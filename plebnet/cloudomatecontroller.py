@@ -29,11 +29,11 @@ def get_ip(provider):
 def setrootpw(provider, password):
     settings = _user_settings()
     settings.put('rootpw', password)
-    return provider.set_rootpw(settings)
+    return provider.set_root_password(password)
 
 
 def options(provider):
-    return provider.options()
+    return provider.get_options()
 
 
 def get_network_fee():
@@ -44,7 +44,7 @@ def purchase(provider, vps_option, wallet):
     settings = _user_settings()
     option = options(provider)[vps_option]
     try:
-        transaction_hash = provider.purchase(settings, option, wallet)
+        transaction_hash = provider.purchase(wallet, option)
         print("Transaction hash of purchase: {0}".format(transaction_hash))
         return transaction_hash
     except SystemExit, e:

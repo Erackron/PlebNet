@@ -187,8 +187,8 @@ def update_offer(config, dna):
 
 
 def calculate_price(provider, option):
-    vpsoption = options(cloudomate_providers[provider])[option]
-    gateway = cloudomate_providers[provider].gateway
+    vpsoption = options(cloudomate_providers['vps'][provider])[option]
+    gateway = cloudomate_providers['vps'][provider].get_gateway()
     btc_price = gateway.estimate_price(
         cloudomate.wallet.get_price(vpsoption.price, vpsoption.currency)) + cloudomate.wallet.get_network_fee()
     return btc_price
@@ -227,7 +227,7 @@ def update_choice(config, dna):
 
 def pick_provider(providers):
     provider = DNA.choose_provider(providers)
-    gateway = cloudomate_providers[provider].gateway
+    gateway = cloudomate_providers['vps'][provider].get_gateway()
     option, price, currency = pick_option(provider)
     btc_price = gateway.estimate_price(
         cloudomate.wallet.get_price(price, currency)) + cloudomate.wallet.get_network_fee()
@@ -240,7 +240,7 @@ def pick_option(provider):
     :param provider: 
     :return: (option, price, currency)
     """
-    vpsoptions = options(cloudomate_providers[provider])
+    vpsoptions = options(cloudomate_providers['vps'][provider])
     cheapestoption = 0
     for item in range(len(vpsoptions)):
         if vpsoptions[item].price < vpsoptions[cheapestoption].price:
@@ -257,7 +257,7 @@ def purchase_choice(config):
     :return: success
     """
     (provider, option, _) = config.get('chosen_provider')
-    transaction_hash = cloudomatecontroller.purchase(cloudomate_providers[provider], option, wallet=Wallet())
+    transaction_hash = cloudomatecontroller.purchase(cloudomate_providers['vps'][provider], option, wallet=Wallet())
     if transaction_hash:
         config.get('bought').append((provider, transaction_hash))
         config.set('chosen_provider', None)
@@ -287,7 +287,7 @@ def install_available_servers(config, dna):
         print("Checking whether %s is activated" % provider)
 
         try:
-            ip = cloudomatecontroller.get_ip(cloudomate_providers[provider])
+            ip = cloudomatecontroller.get_ip(cloudomate_providers['vps'][provider])
         except BaseException as e:
             print(e)
             print("%s not ready yet" % provider)
@@ -298,8 +298,9 @@ def install_available_servers(config, dna):
             user_options = Settings()
             user_options.read_settings()
             rootpw = user_options.get('rootpw')
-            cloudomate_providers[provider].br = cloudomate_providers[provider]._create_browser()
-            cloudomatecontroller.setrootpw(cloudomate_providers[provider], rootpw)
+            # u wot m8
+            #cloudomate_providers['vps'][provider].br = cloudomate_providers['vps'][provider]._create_browser()
+            cloudomatecontroller.setrootpw(cloudomate_providers['vps'][provider], rootpw)
             parentname = '{0}-{1}'.format(user_options.get('firstname'), user_options.get('lastname'))
             dna.create_child_dna(provider, parentname, transaction_hash)
             # Save config before entering possibly long lasting process
