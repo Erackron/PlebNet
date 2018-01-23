@@ -63,6 +63,8 @@ def generate_config():
     locale = random.choice(['cs_CZ', 'de_DE', 'dk_DK', 'es_ES', 'et_EE', 'hr_HR', 'it_IT'])
     fake = Factory().create(locale)
     cp = ConfigParser.ConfigParser()
+    # set optionxform to preserve case
+    cp.optionxform = str
     _generate_address(cp, fake)
     _generate_server(cp, fake)
     _generate_user(cp, fake)
@@ -79,6 +81,31 @@ def _remove_unicode(cp):
             if isinstance(item, unicode):
                 cp.set(section, option, unicodedata.normalize('NFKD', item).encode('ascii', 'ignore'))
 
+#
+# [User]
+# email =
+# firstName =
+# lastName =
+# companyName =
+# phoneNumber =
+# password =
+#
+# [Address]
+# address =
+# city =
+# state =
+# countryCode =
+# zipcode =
+#
+# [payment]
+# walletpath =
+#
+# [Server]
+# root_password =
+# ns1 =
+# ns2 =
+# hostname =
+
 
 def _generate_user(cp, fake):
     cp.add_section('User')
@@ -87,10 +114,10 @@ def _generate_user(cp, fake):
     full_name = firstname + '_' + lastname
     full_name = full_name.replace(' ', '_')
     cp.set('User', 'email', full_name + '@heijligers.me')
-    cp.set('User', 'firstname', firstname)
-    cp.set('User', 'lastname', lastname)
-    cp.set('User', 'companyname', fake.company())
-    cp.set('User', 'phonenumber', fake.numerify('##########'))
+    cp.set('User', 'firstName', firstname)
+    cp.set('User', 'lastName', lastname)
+    cp.set('User', 'companyName', fake.company())
+    cp.set('User', 'phoneNumber', fake.numerify('##########'))
     cp.set('User', 'password', fake.password(length=10, special_chars=False))
 
 
@@ -99,13 +126,13 @@ def _generate_address(cp, fake):
     cp.set('Address', 'address', fake.street_address())
     cp.set('Address', 'city', fake.city())
     cp.set('Address', 'state', fake.state())
-    cp.set('Address', 'countrycode', fake.country_code())
+    cp.set('Address', 'countryCode', fake.country_code())
     cp.set('Address', 'zipcode', fake.postcode())
 
 
 def _generate_server(cp, fake):
     cp.add_section('Server')
-    cp.set('Server', 'rootpw', fake.password(length=10, special_chars=False))
+    cp.set('Server', 'root_password', fake.password(length=10, special_chars=False))
     cp.set('Server', 'ns1', 'ns1')
     cp.set('Server', 'ns2', 'ns2')
     cp.set('Server', 'hostname', fake.word())
