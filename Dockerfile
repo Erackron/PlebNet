@@ -36,6 +36,8 @@ RUN apt update && apt install -y \
 # Market community reputation dependencies
 	python-networkx \
 	python-scipy
+
+RUN apt install -y openvpn
 	
 RUN pip install pyaes psutil requests[security]
 
