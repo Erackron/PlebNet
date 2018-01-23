@@ -138,7 +138,9 @@ def check(args):
 
     if config.get('chosen_provider'):
         (provider, option, _) = config.get('chosen_provider')
-        if marketapi.get_btc_balance() >= calculate_price(provider, option):
+        vpnprovider = cloudomate_providers['vpn']["AzireVPN"] #HARDCODED. SHOULD BE CHANGED BY NEXT TEAM
+        vpnoption = vpnprovider.get_options()[0] #HARDCODED
+        if marketapi.get_btc_balance() >= calculate_vps_price(provider, option)+calculate_vpn_price(vpnprovider,vpnoption):
             print("Purchase server")
             transaction_hash, provider = purchase_choice(config)
             if transaction_hash:
@@ -186,11 +188,17 @@ def update_offer(config, dna):
     place_offer(btc_price, config)
 
 
-def calculate_price(provider, option):
+def calculate_vps_price(provider, option):
     vpsoption = options(cloudomate_providers['vps'][provider])[option]
     gateway = cloudomate_providers['vps'][provider].get_gateway()
     btc_price = gateway.estimate_price(
         cloudomate.wallet.get_price(vpsoption.price, vpsoption.currency)) + cloudomate.wallet.get_network_fee()
+    return btc_price
+
+def calculate_vpn_price(provider, vpnoption):
+    gateway = cloudomate_providers['vpn']["AzireVPN"].get_gateway()
+    btc_price = gateway.estimate_price(
+        cloudomate.wallet.get_price(vpnoption.price, vpnoption.currency)) + cloudomate.wallet.get_network_fee()
     return btc_price
 
 
