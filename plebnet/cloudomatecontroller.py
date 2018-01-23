@@ -63,8 +63,6 @@ def generate_config():
     locale = random.choice(['cs_CZ', 'de_DE', 'dk_DK', 'es_ES', 'et_EE', 'hr_HR', 'it_IT'])
     fake = Factory().create(locale)
     cp = ConfigParser.ConfigParser()
-    # set optionxform to preserve case
-    cp.optionxform = str
     _generate_address(cp, fake)
     _generate_server(cp, fake)
     _generate_user(cp, fake)
@@ -108,31 +106,32 @@ def _remove_unicode(cp):
 
 
 def _generate_user(cp, fake):
-    cp.add_section('User')
+    cp.add_section('user')
     firstname = fake.first_name()
     lastname = fake.last_name()
     full_name = firstname + '_' + lastname
     full_name = full_name.replace(' ', '_')
-    cp.set('User', 'email', full_name + '@heijligers.me')
-    cp.set('User', 'firstName', firstname)
-    cp.set('User', 'lastName', lastname)
-    cp.set('User', 'companyName', fake.company())
-    cp.set('User', 'phoneNumber', fake.numerify('##########'))
-    cp.set('User', 'password', fake.password(length=10, special_chars=False))
+    cp.set('user', 'username', fake.user_name())
+    cp.set('user', 'email', full_name + '@erackron.com')
+    cp.set('user', 'firstname', firstname)
+    cp.set('user', 'lastname', lastname)
+    cp.set('user', 'companyname', fake.company())
+    cp.set('user', 'phonenumber', fake.numerify('##########'))
+    cp.set('user', 'password', fake.password(length=10, special_chars=False))
 
 
 def _generate_address(cp, fake):
-    cp.add_section('Address')
-    cp.set('Address', 'address', fake.street_address())
-    cp.set('Address', 'city', fake.city())
-    cp.set('Address', 'state', fake.state())
-    cp.set('Address', 'countryCode', fake.country_code())
-    cp.set('Address', 'zipcode', fake.postcode())
+    cp.add_section('address')
+    cp.set('address', 'address', fake.street_address())
+    cp.set('address', 'city', fake.city())
+    cp.set('address', 'state', fake.state())
+    cp.set('address', 'countryCode', fake.country_code())
+    cp.set('address', 'zipcode', fake.postcode())
 
 
 def _generate_server(cp, fake):
-    cp.add_section('Server')
-    cp.set('Server', 'root_password', fake.password(length=10, special_chars=False))
-    cp.set('Server', 'ns1', 'ns1')
-    cp.set('Server', 'ns2', 'ns2')
-    cp.set('Server', 'hostname', fake.word())
+    cp.add_section('server')
+    cp.set('server', 'root_password', fake.password(length=10, special_chars=False))
+    cp.set('server', 'ns1', 'ns1')
+    cp.set('server', 'ns2', 'ns2')
+    cp.set('server', 'hostname', fake.word())
