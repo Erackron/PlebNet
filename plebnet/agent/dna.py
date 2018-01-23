@@ -20,7 +20,7 @@ class DNA:
         testdict = {'Self': '',
                     'parent': '',
                     'transaction_hash': '',
-                    'VPS': {'ccihosting': 0.5, 'linevast': 0.5, 'pulseservers': 0.5, 'rockhoster': 0.5}}
+                    'VPS': {'ccihosting': 0.5, 'linevast': 0.5, 'pulseservers': 0.5}}
         return testdict
 
     def read_dictionary(self):
