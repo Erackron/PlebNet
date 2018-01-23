@@ -1,4 +1,4 @@
 [submodule "tribler"]
 	path = tribler
-	url = https://github.com/rjwvandenberg/tribler
+	url = https://github.com/TCatshoek/tribler.git
 	branch = plebnet
