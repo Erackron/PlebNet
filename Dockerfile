@@ -50,8 +50,8 @@ RUN git clone https://github.com/MechanicalSoup/MechanicalSoup.git
 RUN pip install ./MechanicalSoup
 
 # Install cloudomate
-RUN git clone -b plebref https://github.com/Erackron/cloudomate.git
-RUN pip install ./cloudomate
+#RUN git clone -b plebref https://github.com/Erackron/cloudomate.git
+RUN pip install cloudomate
 
 # Install plebnet
 ADD . ./PlebNet

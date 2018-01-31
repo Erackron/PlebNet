@@ -21,7 +21,7 @@ from electrum.mnemonic import Mnemonic
 from plebnet import cloudomatecontroller, twitter
 from plebnet.agent import marketapi
 from plebnet.agent.dna import DNA
-from plebnet.cloudomatecontroller import options
+from plebnet.cloudomatecontroller import get_vps_options
 from plebnet.config import PlebNetConfig
 
 WALLET_FILE = os.path.expanduser("~/.electrum/wallets/default_wallet")
@@ -189,7 +189,7 @@ def update_offer(config, dna):
 
 
 def calculate_vps_price(provider, option):
-    vpsoption = options(cloudomate_providers['vps'][provider])[option]
+    vpsoption = get_vps_options(cloudomate_providers['vps'][provider])[option]
     gateway = cloudomate_providers['vps'][provider].get_gateway()
     btc_price = gateway.estimate_price(
         cloudomate.wallet.get_price(vpsoption.price, vpsoption.currency)) + cloudomate.wallet.get_network_fee()
@@ -248,7 +248,7 @@ def pick_option(provider):
     :param provider: 
     :return: (option, price, currency)
     """
-    vpsoptions = options(cloudomate_providers['vps'][provider])
+    vpsoptions = get_vps_options(cloudomate_providers['vps'][provider])
     cheapestoption = 0
     for item in range(len(vpsoptions)):
         if vpsoptions[item].price < vpsoptions[cheapestoption].price:
