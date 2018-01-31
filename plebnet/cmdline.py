@@ -184,7 +184,7 @@ def update_offer(config, dna):
     if not config.get('chosen_provider'):
         return
     (provider, option, _) = config.get('chosen_provider')
-    btc_price = calculate_price(provider, option) * 1.15
+    btc_price = calculate_vps_price(provider, option) * 1.15
     place_offer(btc_price, config)
 
 
@@ -192,13 +192,13 @@ def calculate_vps_price(provider, option):
     vpsoption = get_vps_options(cloudomate_providers['vps'][provider])[option]
     gateway = cloudomate_providers['vps'][provider].get_gateway()
     btc_price = gateway.estimate_price(
-        cloudomate.wallet.get_price(vpsoption.price, vpsoption.currency)) + cloudomate.wallet.get_network_fee()
+        cloudomate.wallet.get_price(vpsoption.price, "USD")) + cloudomate.wallet.get_network_fee()
     return btc_price
 
 def calculate_vpn_price(provider, vpnoption):
     gateway = cloudomate_providers['vpn']["AzireVPN"].get_gateway()
     btc_price = gateway.estimate_price(
-        cloudomate.wallet.get_price(vpnoption.price, vpnoption.currency)) + cloudomate.wallet.get_network_fee()
+        cloudomate.wallet.get_price(vpnoption.price, "USD")) + cloudomate.wallet.get_network_fee()
     return btc_price
 
 
@@ -254,8 +254,7 @@ def pick_option(provider):
         if vpsoptions[item].price < vpsoptions[cheapestoption].price:
             cheapestoption = item
 
-    return cheapestoption, vpsoptions[cheapestoption].price, vpsoptions[cheapestoption].currency
-
+    return cheapestoption, vpsoptions[cheapestoption].price, "USD"
 
 def purchase_choice(config):
     """
