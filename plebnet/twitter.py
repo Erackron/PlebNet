@@ -1,5 +1,6 @@
+from __future__ import print_function
 import os
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 
 from appdirs import user_config_dir
 from cloudomate.util.settings import Settings
@@ -26,7 +27,7 @@ def tweet_arrival():
         twitter.update_status(
             status='Pleb %s has joined the botnet for good. #PlebNet #Cloudomate #Tribler #Bitcoin' % name)
         print("Tweeted arrival")
-    except Exception, e:
-        print e
+    except Exception as e:
+        print(e)
         return False
     return True

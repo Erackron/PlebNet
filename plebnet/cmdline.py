@@ -124,8 +124,6 @@ def check(args):
             return False
     # TEMP TO SEE EXITNODE PERFORMANCE
 
-
-
     if not config.get('chosen_provider'):
         print ("Choosing new provider")
         update_choice(config, dna)
@@ -138,9 +136,10 @@ def check(args):
 
     if config.get('chosen_provider'):
         (provider, option, _) = config.get('chosen_provider')
-        vpnprovider = cloudomate_providers['vpn']["AzireVPN"] #HARDCODED. SHOULD BE CHANGED BY NEXT TEAM
-        vpnoption = vpnprovider.get_options()[0] #HARDCODED
-        if marketapi.get_btc_balance() >= calculate_vps_price(provider, option)+calculate_vpn_price(vpnprovider,vpnoption):
+        vpnprovider = cloudomate_providers['vpn']["AzireVPN"]  # HARDCODED. SHOULD BE CHANGED BY NEXT TEAM
+        vpnoption = vpnprovider.get_options()[0]  # HARDCODED
+        if marketapi.get_btc_balance() >= calculate_vps_price(provider, option) + calculate_vpn_price(vpnprovider,
+                                                                                                      vpnoption):
             print("Purchase server")
             transaction_hash, provider = purchase_choice(config)
             if transaction_hash:
@@ -194,6 +193,7 @@ def calculate_vps_price(provider, option):
     btc_price = gateway.estimate_price(
         cloudomate.wallet.get_price(vpsoption.price, "USD")) + cloudomate.wallet.get_network_fee()
     return btc_price
+
 
 def calculate_vpn_price(provider, vpnoption):
     gateway = cloudomate_providers['vpn']["AzireVPN"].get_gateway()
@@ -256,6 +256,7 @@ def pick_option(provider):
 
     return cheapestoption, vpsoptions[cheapestoption].price, "USD"
 
+
 def purchase_choice(config):
     """
     Purchase the cheapest provider in chosen_providers. If buying is successful this provider is moved to bought. In any
@@ -304,11 +305,10 @@ def install_available_servers(config, dna):
         if is_valid_ip(ip):
             user_options = Settings()
             user_options.read_settings()
-            rootpw = user_options.get('rootpw')
+            rootpw = user_options.get('server', 'root_password')
             # u wot m8
-            #cloudomate_providers['vps'][provider].br = cloudomate_providers['vps'][provider]._create_browser()
-            cloudomatecontroller.setrootpw(cloudomate_providers['vps'][provider], rootpw)
-            parentname = '{0}-{1}'.format(user_options.get('firstname'), user_options.get('lastname'))
+            cloudomatecontroller.setrootpw(rootpw)
+            parentname = '{0}-{1}'.format(user_options.get('user', 'firstname'), user_options.get('user', 'lastname'))
             dna.create_child_dna(provider, parentname, transaction_hash)
             # Save config before entering possibly long lasting process
             config.save()

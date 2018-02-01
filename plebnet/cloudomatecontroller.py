@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-import ConfigParser
 import codecs
+import os
 import random
 import unicodedata
+from ConfigParser import ConfigParser
 
 from appdirs import user_config_dir
 from cloudomate import wallet as wallet_util
-from cloudomate.util.settings import Settings, os
-from cloudomate.cmdline import providers
-
+from cloudomate.cmdline import providers, change_root_password_ssh
+from cloudomate.util.settings import Settings
 from faker.factory import Factory
 
 
@@ -28,10 +28,8 @@ def get_ip(provider):
     return provider.get_ip(settings)
 
 
-def setrootpw(provider, password):
-    settings = _user_settings()
-    settings.put('rootpw', password)
-    return provider.set_root_password(password)
+def setrootpw(password):
+    return change_root_password_ssh({'root_password': password})
 
 
 def get_vps_options(provider):
@@ -49,7 +47,7 @@ def purchase(provider, vps_option, wallet):
         transaction_hash = provider.purchase(wallet, option)
         print("Transaction hash of purchase: {0}".format(transaction_hash))
         return transaction_hash
-    except SystemExit, e:
+    except SystemExit as e:
         print("SystemExit catched at cloudomatecontroller purchase")
         print(e)
         return False
@@ -64,7 +62,7 @@ def generate_config():
         return config
     locale = random.choice(['cs_CZ', 'de_DE', 'dk_DK', 'es_ES', 'et_EE', 'hr_HR', 'it_IT'])
     fake = Factory().create(locale)
-    cp = ConfigParser.ConfigParser()
+    cp = ConfigParser()
     _generate_address(cp, fake)
     _generate_server(cp, fake)
     _generate_user(cp, fake)

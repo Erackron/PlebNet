@@ -1,6 +1,9 @@
+from __future__ import print_function
+
 import requests
-from requests.exceptions import ConnectionError
 from cloudomate.wallet import Wallet
+from requests.exceptions import ConnectionError
+
 
 def is_market_running():
     try:
@@ -40,7 +43,7 @@ def _put_request(price, price_type, quantity, quantity_type, timeout, domain):
     if 'created' in json:
         return json['created']
     else:
-        print json['error']['message']
+        print(json['error']['message'])
         return False
 
 
@@ -58,11 +61,11 @@ def bids():
 
 if __name__ == '__main__':
     if not is_market_running():
-        print "Market isn't running"
+        print("Market isn't running")
         exit(0)
-    print get_mc_balance()
-    print put_bid(1, 'MC', 1, 'BTC', 120)
-    print put_ask(1, 'MC', 1, 'BTC', 120)
-    print asks()
-    print bids()
-    print is_market_running()
+    print(get_mc_balance())
+    print(put_bid(1, 'MC', 1, 'BTC', 120))
+    print(put_ask(1, 'MC', 1, 'BTC', 120))
+    print(asks())
+    print(bids())
+    print(is_market_running())

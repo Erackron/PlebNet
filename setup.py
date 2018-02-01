@@ -59,7 +59,8 @@ setup(
         'cloudomate',
         'faker',
         'twython',
-        'ConfigParser'
+        'ConfigParser',
+        'appdirs'
     ],
 
     extras_require={
