@@ -41,11 +41,10 @@ class DNA:
         with open(filename, 'w') as json_file:
             json.dump(self.dictionary, json_file)
 
-    def create_child_dna(self, provider, parentname, transaction_hash):
+    def create_child_dna(self, provider, parentname):
         dictionary = copy.deepcopy(self.dictionary)
         dictionary['Self'] = provider
         dictionary['parent'] = parentname
-        dictionary['transaction_hash'] = transaction_hash
         #TODO
         #raise NotImlementedError('RESET ALL VARIABLES EXCEPT VPS')
         #TODO

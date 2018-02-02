@@ -17,7 +17,7 @@ apt-get update
 
 
 # Install dependencies
-sudo apt-get install -y python-pip
+sudo apt-get install -y python-pip openvpn
 sudo apt-get install -y \
     python-crypto \
     python-pyasn1 \
@@ -43,7 +43,8 @@ sudo apt-get install -y \
     python-scipy \
     python-wxtools \
     git \
-    python-lxml
+    python-lxml \
+    postfix
 if [ $(lsb_release -cs) == "trusty" ]
 then
     echo "Trusty detected"
@@ -59,6 +60,15 @@ then
     sudo echo "deb http://ppa.launchpad.net/chris-lea/libsodium/ubuntu trusty main" >> /etc/apt/sources.list;
     sudo echo "deb-src http://ppa.launchpad.net/chris-lea/libsodium/ubuntu trusty main" >> /etc/apt/sources.list;
     sudo apt-get update && sudo apt-get install -y libsodium-dev;
+elif [ $(lsb_release -cs) == "xenial" ]
+then
+    echo "Xenial detected"
+    apt-get install -y python-cryptography \
+	python-nacl \
+	python-libnacl \
+	python-socks \
+	keyrings.alt
+	pip install cryptography pyOpenSSL --upgrade # Do this to update indirect cloudomate dependency
 else
     apt-get install -y python-cryptography \
 	python-nacl \
@@ -69,7 +79,7 @@ fi
 
 # Update pip to avoid locale errors in certain configurations
 echo "upgrading pip"
-LC_ALL=en_US.UTF-8 pip install --upgrade pip # This line breaks on xenial
+LC_ALL=en_US.UTF-8 pip install --upgrade pip
 echo "done upgrading pip"
 
 pip install pyaes psutil requests[security]
@@ -83,10 +93,11 @@ pip install --upgrade ./PlebNet
 cd PlebNet
 git submodule update --init --recursive tribler
 pip install ./tribler/electrum
-#no longer used since importing own tribler fork
-#cp docker/market/twistd_plugin/plebnet_plugin.py $HOME/PlebNet/tribler/twisted/plugins/
 cd /root
 plebnet setup >> plebnet.log 2>&1
+
+# Enable VPN
+openvpn --config .config/vpn.ovpn & disown
 
 # cron plebnet check
 echo "*/2 * * * * root /usr/local/bin/plebnet check >> plebnet.log 2>&1" > /etc/cron.d/plebnet

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import json
 import os
 import re
@@ -12,6 +13,7 @@ import cloudomate
 import electrum
 from cloudomate.cmdline import providers as cloudomate_providers
 from cloudomate.util.settings import Settings
+from appdirs import user_config_dir
 from cloudomate.wallet import Wallet
 from electrum import Wallet as ElectrumWallet
 from electrum import WalletStorage
@@ -21,7 +23,7 @@ from electrum.mnemonic import Mnemonic
 from plebnet import cloudomatecontroller, twitter
 from plebnet.agent import marketapi
 from plebnet.agent.dna import DNA
-from plebnet.cloudomatecontroller import get_vps_options
+from plebnet.cloudomatecontroller import get_options, get_configuration
 from plebnet.config import PlebNetConfig
 
 WALLET_FILE = os.path.expanduser("~/.electrum/wallets/default_wallet")
@@ -136,20 +138,30 @@ def check(args):
 
     if config.get('chosen_provider'):
         (provider, option, _) = config.get('chosen_provider')
-        vpnprovider = cloudomate_providers['vpn']["AzireVPN"]  # HARDCODED. SHOULD BE CHANGED BY NEXT TEAM
-        vpnoption = vpnprovider.get_options()[0]  # HARDCODED
-        if marketapi.get_btc_balance() >= calculate_vps_price(provider, option) + calculate_vpn_price(vpnprovider,
-                                                                                                      vpnoption):
+        vpn_provider = cloudomate_providers['vpn']["AzireVPN"]  # TODO: Remove hardcoded AzireVPN
+        vpn_option_id = 0  # TODO: Remove hardcoded option 0
+        vpn_option = vpn_provider.get_options()[vpn_option_id]
+        if marketapi.get_btc_balance() >= calculate_vps_price(provider, option) + calculate_vpn_price(vpn_provider, vpn_option):
             print("Purchase server")
-            transaction_hash, provider = purchase_choice(config)
-            if transaction_hash:
-                config.get('transactions').append(transaction_hash)
-                # evolve yourself positively if you are successfull
+            success, provider = purchase_choice(config)
+            if success:
+                # evolve yourself positively if you are successful
                 own_provider = get_own_provider(dna)
                 evolve(own_provider, dna, True)
+
+                print("Purchase VPN")
+                if cloudomatecontroller.purchase(vpn_provider, vpn_option_id, Wallet()):
+                    vpn_config = get_configuration(vpn_provider)
+                    ovpn_file = os.path.join(user_config_dir(), 'child-vpn.ovpn')
+                    credentials_file = os.path.join(user_config_dir(), 'child-credentials.conf')
+                    with open(ovpn_file, 'w') as ovpn:
+                        ovpn.write(vpn_config.ovpn + "\nauth-user-pass credentials.conf")
+                    with open(credentials_file, 'w') as credentials:
+                        credentials.write(vpn_config.username + '\n' + vpn_config.password)
             else:
-                # evolve provider negatively if not succesfull
+                # evolve provider negatively if not successful
                 evolve(provider, dna, False)
+
         config.save()
         return
 
@@ -188,17 +200,17 @@ def update_offer(config, dna):
 
 
 def calculate_vps_price(provider, option):
-    vpsoption = get_vps_options(cloudomate_providers['vps'][provider])[option]
+    vpsoption = get_options(cloudomate_providers['vps'][provider])[option]
     gateway = cloudomate_providers['vps'][provider].get_gateway()
     btc_price = gateway.estimate_price(
         cloudomate.wallet.get_price(vpsoption.price, "USD")) + cloudomate.wallet.get_network_fee()
     return btc_price
 
 
-def calculate_vpn_price(provider, vpnoption):
-    gateway = cloudomate_providers['vpn']["AzireVPN"].get_gateway()
+def calculate_vpn_price(provider, vpn_option):
+    gateway = provider.get_gateway()
     btc_price = gateway.estimate_price(
-        cloudomate.wallet.get_price(vpnoption.price, "USD")) + cloudomate.wallet.get_network_fee()
+        cloudomate.wallet.get_price(vpn_option.price, "USD")) + cloudomate.wallet.get_network_fee()
     return btc_price
 
 
@@ -248,7 +260,7 @@ def pick_option(provider):
     :param provider: 
     :return: (option, price, currency)
     """
-    vpsoptions = get_vps_options(cloudomate_providers['vps'][provider])
+    vpsoptions = get_options(cloudomate_providers['vps'][provider])
     cheapestoption = 0
     for item in range(len(vpsoptions)):
         if vpsoptions[item].price < vpsoptions[cheapestoption].price:
@@ -307,13 +319,13 @@ def install_available_servers(config, dna):
             user_options.read_settings()
             rootpw = user_options.get('server', 'root_password')
             # u wot m8
-            cloudomatecontroller.setrootpw(rootpw)
+            cloudomatecontroller.setrootpw(provider, rootpw)
             parentname = '{0}-{1}'.format(user_options.get('user', 'firstname'), user_options.get('user', 'lastname'))
-            dna.create_child_dna(provider, parentname, transaction_hash)
+            dna.create_child_dna(provider, parentname)
             # Save config before entering possibly long lasting process
             config.save()
             success = install_server(ip, rootpw)
-            send_child_creation_mail(ip, rootpw, success, config, user_options, transaction_hash)
+            send_child_creation_mail(ip, rootpw, success, config, user_options)
             # Reload config in case install takes a long time
             config.load()
             config.get('installed').append({provider: success})
@@ -322,11 +334,10 @@ def install_available_servers(config, dna):
             config.save()
 
 
-def send_child_creation_mail(ip, rootpw, success, config, user_options, transaction_hash):
+def send_child_creation_mail(ip, rootpw, success, config, user_options):
     mail_message = 'IP: %s\n' % ip
     mail_message += 'Root password: %s\n' % rootpw
     mail_message += 'Success: %s\n' % success
-    mail_message += 'Transaction_hash: %s\n' % transaction_hash
     mail_dna = DNA()
     mail_dna.read_dictionary()
     mail_message += '\nDNA\n%s\n' % json.dumps(mail_dna.dictionary)
@@ -353,22 +364,22 @@ def install_server(ip, rootpw):
 
 def send_mail(mail_message, name):
     sender = name + '@pleb.net'
-    receivers = ['plebnet@heijligers.me']
+    receivers = ['plebnet@erackron.com']
 
     mail = """From: %s <%s>
-To: Jaap <plebnet@heijligers.me>
+To: PlebNet <plebnet@erackron.com>
 Subject: New child spawned
 
 """ % (name, sender)
     mail += mail_message
 
     try:
-        print("Sending mail: %s" + mail)
-        smtp = smtplib.SMTP('mail.heijligers.me')
+        print("Sending mail: %s" % mail)
+        smtp = smtplib.SMTP('localhost')
         smtp.sendmail(sender, receivers, mail)
-        print "Successfully sent email"
+        print("Successfully sent email")
     except smtplib.SMTPException:
-        print "Error: unable to send email"
+        print("Error: unable to send email")
 
 
 if __name__ == '__main__':
