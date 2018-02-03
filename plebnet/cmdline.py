@@ -126,15 +126,15 @@ def check(args):
             return False
     # TEMP TO SEE EXITNODE PERFORMANCE
 
-    if not config.get('chosen_provider'):
-        print ("Choosing new provider")
-        update_choice(config, dna)
-        config.save()
+    # if not config.get('chosen_provider'):
+    #     print ("Choosing new provider")
+    #     update_choice(config, dna)
+    #     config.save()
 
-    if config.time_since_offer() > TIME_IN_HOUR:
-        print("Calculating new offer")
-        update_offer(config, dna)
-        config.save()
+    # if config.time_since_offer() > TIME_IN_HOUR:
+    #     print("Calculating new offer")
+    #     update_offer(config, dna)
+    #     config.save()
 
     if config.get('chosen_provider'):
         (provider, option, _) = config.get('chosen_provider')
@@ -342,7 +342,7 @@ def send_child_creation_mail(ip, rootpw, success, config, user_options):
     mail_dna.read_dictionary()
     mail_message += '\nDNA\n%s\n' % json.dumps(mail_dna.dictionary)
     mail_message += '\nConfig\n%s\n' % json.dumps(config.config)
-    send_mail(mail_message, user_options.get('firstname') + ' ' + user_options.get('lastname'))
+    send_mail(mail_message, user_options.get('user', 'firstname') + ' ' + user_options.get('user', 'lastname'))
 
 
 def is_valid_ip(ip):
