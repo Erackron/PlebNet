@@ -29,6 +29,7 @@ from plebnet.config import PlebNetConfig
 WALLET_FILE = os.path.expanduser("~/.electrum/wallets/default_wallet")
 TRIBLER_HOME = os.path.expanduser("~/PlebNet/tribler")
 PLEBNET_CONFIG = os.path.expanduser("~/.plebnet.cfg")
+PLEBNET_SCRIPTS = os.path.expanduser("~/Plebnet/scripts")
 TIME_IN_HOUR = 60.0 * 60.0
 TIME_IN_DAY = TIME_IN_HOUR * 24.0
 
@@ -350,8 +351,7 @@ def is_valid_ip(ip):
 
 
 def install_server(ip, rootpw):
-    file_path = os.path.dirname(os.path.realpath(__file__))
-    script_path = os.path.join(file_path, '/root/PlebNet/scripts/create-child.sh')
+    script_path = os.path.join(PLEBNET_SCRIPTS, 'create-child.sh')
     command = '%s %s %s' % (script_path, ip.strip(), rootpw.strip())
     print("Running %s" % command)
     success = subprocess.call(command, shell=True)

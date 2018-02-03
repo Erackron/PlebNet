@@ -48,5 +48,5 @@ sshpass -p${PASSWORD} scp -o StrictHostKeyChecking=no ${OVPN_AUTH_FILE} root@${I
 echo "Installing PlebNet"
 sshpass -p${PASSWORD} ssh -o StrictHostKeyChecking=no root@${IP} 'apt-get update && \
     apt-get install -y git && \
-    git clone -b master https://github.com/Erackron/PlebNet && \
+    git clone -b plebbeun https://github.com/Erackron/PlebNet && \
     cd PlebNet && scripts/install.sh'
